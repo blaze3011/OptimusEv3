@@ -6,11 +6,11 @@ public class OptimusMain {
 
 	public static void main(String[] args) {
 			// TODO Auto-generated method stub
-//		DetectMotion detectMot = new DetectMotion();
+		DetectMotion detectMot = new DetectMotion();
 		CamDisplay camDisp = new CamDisplay();
 		
 		
-//		detectMot.detectObject();
+		detectMot.detectObject();
 		try {
 			camDisp.motionStart();
 		} catch (IOException e) {

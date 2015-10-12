@@ -9,10 +9,8 @@ import lejos.utility.Delay;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class DetectMotion {
-	private RegulatedMotor motorB = new EV3LargeRegulatedMotor(MotorPort.B);
-	private RegulatedMotor motorC = new EV3LargeRegulatedMotor(MotorPort.C);
-	EV3UltrasonicSensor ultraSensor = new EV3UltrasonicSensor(SensorPort.S2);
-	
+	private EV3UltrasonicSensor ultraSensor = new EV3UltrasonicSensor(SensorPort.S2);
+	private Pilot movePilot = new Pilot();
 	
 	public void detectObject(){
 
@@ -27,12 +25,10 @@ public class DetectMotion {
 
 					//Movement Code
 					if (onDist[count] > 0.10){
-						motorB.forward();
-						motorC.forward();
+						movePilot.forward();
 					} 
 					else {
-						motorB.stop();
-						motorC.stop();
+						movePilot.stop();
 					}	
 				}
 			} else {

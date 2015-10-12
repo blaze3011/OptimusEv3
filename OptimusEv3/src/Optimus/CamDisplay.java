@@ -18,9 +18,10 @@ public class CamDisplay {
 	private RegulatedMotor motorC = new EV3LargeRegulatedMotor(MotorPort.C);
     //private static final int NUM_PIXELS = WIDTH * HEIGHT;
     
-    private static int [][] luminanceFrame = new int[HEIGHT][WIDTH];
-    private static int threshold = 70;
-    private static MotionMap aMotMap = new MotionMap();
+    private int [][] luminanceFrame = new int[HEIGHT][WIDTH];
+    private int threshold = 70;
+    private MotionMap aMotMap = new MotionMap();
+    private Pilot movePilot = new Pilot();
     
     public CamDisplay() {
 		// Initialize luminance frame
@@ -38,6 +39,7 @@ public class CamDisplay {
         float diff = 0;
         byte[] frame = video.createFrame();
          
+        //escape sequence 
         while(Button.ESCAPE.isUp()) {
             video.grabFrame(frame);
             // y1: pos 0; u: pos 1; y2: pos 2; v: pos 3.
@@ -50,29 +52,29 @@ public class CamDisplay {
             
             //System.out.println("Max motion: " + aMotMap.compMaxMotion());
             System.out.println("L:" + (int) aMotMap.leftMotion + " R:" + (int) aMotMap.rightMotion);
+           
+            //gets a difference value to start the movement loop
             diff = (int) aMotMap.leftMotion - (int) aMotMap.rightMotion;
-            	motorB.forward();
-            	motorC.forward();
+            	
+            //Gets the motors to move forward 
+            movePilot.forward();
+            	
             	
             while (Math.abs(diff) > 15){
 	            if ((int) aMotMap.leftMotion > (int) aMotMap.rightMotion){
-	            	motorB.rotate(120);
-	            	motorC.rotate(240);
+	            	movePilot.left();
 	            	diff = 0;
 	            } else if ((int) aMotMap.leftMotion == (int) aMotMap.rightMotion){
-	            	motorB.stop();
-	            	motorC.stop();
+	            	movePilot.stop();
+	            	diff = 0;
+	            } else if ((int) aMotMap.leftMotion < (int) aMotMap.rightMotion){
+	            	movePilot.right();
 	            	diff = 0;
 	            } else {
-	            	motorB.rotate(240);
-	            	motorC.rotate(120);
+	            	movePilot.stop();
 	            	diff = 0;
 	            }
             }
-            
-            
-            
-            
             
             // Display the frame or motion
             //dispFrame();
@@ -95,7 +97,7 @@ public class CamDisplay {
     }
     
     // DO: Improve this possibly by combining with chrominance values.
-    public static void extractLuminanceValues(byte [] frame) {
+    public void extractLuminanceValues(byte [] frame) {
     	int x,y;
     	int doubleWidth = 2*WIDTH; // y1: pos 0; u: pos 1; y2: pos 2; v: pos 3.
     	int frameLength = frame.length;
@@ -106,7 +108,7 @@ public class CamDisplay {
     	}
     }
     
-    public static void dispFrame() {
+    public void dispFrame() {
     	for (int y=0; y<HEIGHT; y++) {
     		for (int x=0; x<WIDTH; x++) {
     			if (luminanceFrame[y][x] <= threshold) {
@@ -120,7 +122,7 @@ public class CamDisplay {
     	
     }
     
-    public static void dispMotion() {
+    public void dispMotion() {
     	if (aMotMap.motionMap != null) {
     		for (int y=0; y<HEIGHT; y++) {
     			for (int x=0; x<WIDTH; x++) {
