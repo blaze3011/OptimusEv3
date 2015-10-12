@@ -8,7 +8,7 @@ import lejos.robotics.navigation.MoveController;
 import lejos.utility.Delay;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
-public class detectMotion {
+public class DetectMotion {
 	MoveController pilot;
 	RegulatedMotor motorB = new EV3LargeRegulatedMotor(MotorPort.B);
 	RegulatedMotor motorC = new EV3LargeRegulatedMotor(MotorPort.C);
