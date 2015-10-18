@@ -9,31 +9,38 @@ import lejos.utility.Delay;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class DetectMotion {
-	private EV3UltrasonicSensor ultraSensor = new EV3UltrasonicSensor(SensorPort.S2);
-	private Pilot movePilot = new Pilot();
+	//Initializes the ultrasonic sensor and specifies the port
+	private EV3UltrasonicSensor ultraSensor = new EV3UltrasonicSensor(SensorPort.S3);
 	
-	public void detectObject(){
-
+	//Method to return the distance of an object in flot[] 
+	public int detectObject(){
 		float[] onDist = new float[10];
 		boolean detection = true;
+		
+		//enables the ultrasonic sensor
 		ultraSensor.enable();
-			if (ultraSensor.isEnabled()){
-				while (detection){
-					int count = 0;
-
-					ultraSensor.getDistanceMode().fetchSample(onDist, 0);
-
-					//Movement Code
-					if (onDist[count] > 0.10){
-						movePilot.forward();
-					} 
-					else {
-						movePilot.stop();
-					}	
-				}
-			} else {
+		//loop to check if ultrasonic sensor is enabled
+		if (ultraSensor.isEnabled()){
+			while (detection){
+				ultraSensor.getDistanceMode().fetchSample(onDist, 0);
+				
+				//the sample is always in the first variable in the array
+				if (onDist[0] > 0.10){
+					//gives signal to controller to move
+					return 1;
+				} 
+				else {
+					//Distance to object is too near tell controller to stop.
+					return 0;
+				}	
+			}
+		}
+		else{
+			//display error message
 				LCD.drawString("Ultrasonic Sensor not enabled", 0, 4);
 				Delay.msDelay(5000);
-			}
+		}
+		//stop by default
+			return 0;
 	}
 }

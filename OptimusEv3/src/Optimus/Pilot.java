@@ -8,7 +8,7 @@ public class Pilot {
 	
 	private RegulatedMotor motorB = new EV3LargeRegulatedMotor(MotorPort.B);
 	private RegulatedMotor motorC = new EV3LargeRegulatedMotor(MotorPort.C);
-	
+
 	public void forward(){
 		motorB.forward();
 		motorC.forward();
@@ -30,6 +30,7 @@ public class Pilot {
 	}
 	
 	public void stop(){
+		
 		motorB.stop();
 		motorC.stop();
 	}

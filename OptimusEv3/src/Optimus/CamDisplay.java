@@ -14,14 +14,11 @@ public class CamDisplay {
 
 	private static final int WIDTH = 160;
     private static final int HEIGHT = 120;
-    private RegulatedMotor motorB = new EV3LargeRegulatedMotor(MotorPort.B);
-	private RegulatedMotor motorC = new EV3LargeRegulatedMotor(MotorPort.C);
     //private static final int NUM_PIXELS = WIDTH * HEIGHT;
     
     private int [][] luminanceFrame = new int[HEIGHT][WIDTH];
-    private int threshold = 70;
+    private int threshold = 145;
     private MotionMap aMotMap = new MotionMap();
-    private Pilot movePilot = new Pilot();
     
     public CamDisplay() {
 		// Initialize luminance frame
@@ -32,11 +29,11 @@ public class CamDisplay {
     	}
 	}
     
-    public void motionStart() throws IOException{
+    public int motionStart() throws IOException{
     	EV3 ev3 = (EV3) BrickFinder.getLocal();
         Video video = ev3.getVideo();
         video.open(WIDTH, HEIGHT);
-        float diff = 0;
+        int diff = 0;
         byte[] frame = video.createFrame();
          
         //escape sequence 
@@ -56,23 +53,21 @@ public class CamDisplay {
             //gets a difference value to start the movement loop
             diff = (int) aMotMap.leftMotion - (int) aMotMap.rightMotion;
             	
-            //Gets the motors to move forward 
-            movePilot.forward();
-            	
-            	
+            
+            //1 is left 0 is stop 2 is right
             while (Math.abs(diff) > 15){
 	            if ((int) aMotMap.leftMotion > (int) aMotMap.rightMotion){
-	            	movePilot.left();
 	            	diff = 0;
+	            	return 1;
 	            } else if ((int) aMotMap.leftMotion == (int) aMotMap.rightMotion){
-	            	movePilot.stop();
 	            	diff = 0;
+	            	return 0;
 	            } else if ((int) aMotMap.leftMotion < (int) aMotMap.rightMotion){
-	            	movePilot.right();
 	            	diff = 0;
+	            	return 2;
 	            } else {
-	            	movePilot.stop();
 	            	diff = 0;
+	            	return 0;
 	            }
             }
             
@@ -93,7 +88,8 @@ public class CamDisplay {
             }
         }
         video.close();
-    	
+        //wrong
+		return diff;
     }
     
     // DO: Improve this possibly by combining with chrominance values.
